@@ -3,8 +3,6 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, DeriveInput};
 
-mod field_mapper;
-
 #[proc_macro_derive(Table)]
 pub fn table(input: TokenStream) -> TokenStream {
     // Parse the input tokens into a syntax tree
@@ -12,32 +10,26 @@ pub fn table(input: TokenStream) -> TokenStream {
     let name = input.ident;
 
     // Extract fields from the input struct
-    let fields = if let syn::Data::Struct(data) = input.data {
-        data.fields.iter().map(|f| {
-            let field_name = &f.ident;
-            let field_type = &f.ty;
-            let field_vis = &f.vis;
-            quote! {
-                surreal_client::field::Field {
-                    ident: Some(syn::Ident::new(stringify!(#field_name), proc_macro2::Span::call_site())),
-                    vis: #field_vis,
-                    attrs: vec![],
-                    ty: #field_type,
-                }
-            }
-        }).collect::<Vec<_>>()
+    let fields: Vec<surreal_client::field::Field> = if let syn::Data::Struct(data) = input.data {
+        data.fields
+            .iter()
+            .map(surreal_client::field::Field::from)
+            .collect::<Vec<_>>()
     } else {
         Vec::new()
     };
 
+    let static_fields = fields.iter().map(surreal_client::field::StaticField::from);
+
     let expanded = quote! {
         impl<'a> surreal_client::table::Table<'a> for #name {
             fn name() -> &'a str {
-                stringify!(#name)
+                static NAME: &str = stringify!(#name);
+                NAME
             }
 
-            fn fields() -> &'a [surreal_client::field::Field] {
-                static FIELDS: &[surreal_client::field::Field] = &[#(#fields),*];
+            fn fields() -> &'a [surreal_client::field::StaticField<'a>] {
+                static FIELDS: &[surreal_client::field::StaticField] = &[#(#static_fields),*];
                 FIELDS
             }
 

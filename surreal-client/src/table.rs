@@ -1,9 +1,7 @@
-use crate::field::Field;
-
-use super::query::Query;
+use crate::{field::StaticField, query::base::Query};
 
 pub trait Table<'a>: Sized {
     fn name() -> &'a str;
-    fn fields() -> &'a [Field<'a>];
+    fn fields() -> &'a [StaticField<'a>];
     fn find() -> Query<'a, Self>;
 }

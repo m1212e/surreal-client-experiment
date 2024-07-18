@@ -1,10 +1,11 @@
 use surreal_client::table::Table;
 use surreal_client_macro::Table;
 
-
 #[derive(Table)]
 struct Person {
-    name: String,
+    username: String,
+    first_name: String,
+    last_name: String,
 }
 
 #[derive(Table)]
@@ -14,18 +15,16 @@ struct Post {
 
 fn main() {
     let person = Person {
-        name: "John Doe".to_string(),
+        username: "xXJohn_DoeXx".to_string(),
+        first_name: "John".to_string(),
+        last_name: "Doe".to_string(),
+
     };
     let post = Post {
         title: "my cool post".to_string(),
     };
 
-    let persons = Person::find().build();
+    let query = Person::find().build();
 
-
-    surreal_client::field::Field {
-        attrs
-    }
-
-    println!("{}", persons);
+    println!("{}", query);
 }
