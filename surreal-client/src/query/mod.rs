@@ -1,4 +1,4 @@
-use base::Query;
-
-pub mod base;
-
+pub mod query;
+mod query_part;
+mod table_specifier;
+mod selection;

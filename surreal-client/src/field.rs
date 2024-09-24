@@ -79,18 +79,13 @@ pub struct Field<'a> {
     pub field_type: FieldType<'a>,
 }
 
-pub struct StaticField<'a> {
-    pub name: &'a str,
-    pub field_type: &'a FieldType<'a>,
-}
-
-impl<'a> ToTokens for StaticField<'a> {
+impl<'a> ToTokens for Field<'a> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let name = &self.name;
         let field_type = &self.field_type;
 
         tokens.extend(quote! {
-            surreal_client::field::StaticField {
+            surreal_client::field::Field {
                 name: #name,
                 field_type: &#field_type,
             }
@@ -112,15 +107,6 @@ impl<'a> From<&syn::Field> for Field<'a> {
         Field {
             name: name,
             field_type: field_type,
-        }
-    }
-}
-
-impl<'a> From<&'a Field<'a>> for StaticField<'a> {
-    fn from(value: &'a Field<'a>) -> Self {
-        StaticField {
-            name: &value.name,
-            field_type: &value.field_type,
         }
     }
 }

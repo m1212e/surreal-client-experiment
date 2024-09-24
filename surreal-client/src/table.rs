@@ -1,7 +1,6 @@
-use crate::{field::StaticField, query::base::Query};
+use crate::field::Field;
 
-pub trait Table<'a>: Sized {
-    fn name() -> &'a str;
-    fn fields() -> &'a [StaticField<'a>];
-    fn find() -> Query<'a, Self>;
+pub trait Table<'a> {
+    fn name() -> String;
+    fn fields() -> Vec<Field<'a>>;
 }

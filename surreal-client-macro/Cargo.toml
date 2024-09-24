@@ -9,8 +9,7 @@ proc-macro = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-macro_state = "0.2.0"
 quote = "1.0"
 syn = "2.0"
-surreal-client = { path = "../surreal-client" }
+# surreal-client = { path = "../surreal-client" }
 proc-macro2 = "1.0"
