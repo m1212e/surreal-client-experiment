@@ -776,6 +776,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "derive-syn-parse"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e79116f119dd1dba1abf1f3405f03b9b0e79a27a3883864bfebded8a3dc768cd"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "deunicode"
 version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -884,6 +895,7 @@ checksum = "0206175f82b8d6bf6652ff7d71a1e27fd2e4efde587fd368662814d6ec1d9ce0"
 name = "example"
 version = "0.1.0"
 dependencies = [
+ "serde",
  "surreal-client",
  "surreal-client-macro",
 ]
@@ -1561,6 +1573,28 @@ name = "mac"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c41e0c4fef86961ac6d6f8a82609f55f31b05e4fce149ac5710e439df7619ba4"
+
+[[package]]
+name = "macro_state"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "772f7662b84d85d514fb3a72417bc7067f9eabbe80d56a9c2ff326b7d6ad0ae4"
+dependencies = [
+ "lazy_static",
+ "macro_state_macros",
+]
+
+[[package]]
+name = "macro_state_macros"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "28a71d3b95d81cac5bac4100d2b9d70798e3ad274798afade206f49b0801bc93"
+dependencies = [
+ "derive-syn-parse",
+ "lazy_static",
+ "quote",
+ "syn 1.0.109",
+]
 
 [[package]]
 name = "maplit"
@@ -3012,6 +3046,7 @@ version = "0.1.0"
 dependencies = [
  "proc-macro2",
  "quote",
+ "serde",
  "surrealdb",
  "syn 2.0.77",
 ]
@@ -3020,8 +3055,12 @@ dependencies = [
 name = "surreal-client-macro"
 version = "0.1.0"
 dependencies = [
+ "macro_state",
  "proc-macro2",
  "quote",
+ "serde",
+ "serde_json",
+ "surreal-client",
  "syn 2.0.77",
 ]
 

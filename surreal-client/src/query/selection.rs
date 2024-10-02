@@ -3,11 +3,11 @@ use std::collections::HashMap;
 use super::query_part::QueryBuilderPart;
 use crate::field::Field;
 
-pub struct Selection<'a> {
-    selected_fields: Vec<Field<'a>>,
+pub struct Selection {
+    selected_fields: Vec<Field>,
 }
 
-impl<'a> QueryBuilderPart for Selection<'a> {
+impl QueryBuilderPart for Selection {
     fn to_string(&self) -> String {
         format!(
             "SELECT {}",
@@ -27,8 +27,8 @@ impl<'a> QueryBuilderPart for Selection<'a> {
     }
 }
 
-impl<'a> Selection<'a> {
-    pub fn new(selected_fields: Vec<Field<'a>>) -> Self {
+impl Selection {
+    pub fn new(selected_fields: Vec<Field>) -> Self {
         Selection { selected_fields }
     }
 }

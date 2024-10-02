@@ -1,26 +1,24 @@
-use surreal_client::{field::{Field, FieldType}, table::Table};
 use surreal_client_macro::find_one;
-struct TestTable {}
+use surreal_client_macro::Table;
 
-impl<'a> Table<'a> for TestTable {
-    fn name() -> String {
-        "test_table".to_string()
-    }
+#[derive(Table)]
+struct User {
+    name: String,
+    age: i32,
+}
 
-    fn fields() -> Vec<Field<'a>> {
-        vec![
-            Field {
-                name: "a".to_string(),
-                field_type: FieldType::Any,
-            },
-            Field {
-                name: "b".to_string(),
-                field_type: FieldType::Any,
-            },
-        ]
-    }
+#[derive(Table)]
+struct Person {
+    name: String,
+    age: i32,
+}
+
+#[derive(Table)]
+struct Human {
+    name: String,
+    age: i32,
 }
 
 fn main() {
-    let query = find_one!(TestTable);
+    let query = find_one!(User);
 }

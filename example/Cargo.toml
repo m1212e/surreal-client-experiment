@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 surreal-client-macro = { path = "../surreal-client-macro" }
 surreal-client = { path = "../surreal-client" }
+serde = "1.0.210"

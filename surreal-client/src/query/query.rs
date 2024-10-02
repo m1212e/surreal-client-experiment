@@ -6,12 +6,12 @@ use crate::{field::Field, query::query_part::QueryBuilderPart, table::Table};
 
 use super::{selection::Selection, table_specifier::TableSpecifier};
 
-pub struct Query<'a> {
-    selected_fields: Selection<'a>,
+pub struct Query {
+    selected_fields: Selection,
     table_specifier: TableSpecifier,
 }
 
-impl<'a> QueryBuilderPart for Query<'a> {
+impl QueryBuilderPart for Query {
     fn to_string(&self) -> String {
         format!(
             "{} {};",
@@ -27,15 +27,15 @@ impl<'a> QueryBuilderPart for Query<'a> {
     }
 }
 
-impl<'a> ToTokens for Query<'a> {
+impl ToTokens for Query {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
         let query_string = self.to_string();
         tokens.extend(quote::quote! { #query_string });
     }
 }
 
-impl<'a> Query<'a> {
-    pub fn new<T: Table<'a>>(selected_fields: Vec<Field<'a>>) -> Self {
+impl Query {
+    pub fn new<T: Table>(selected_fields: Vec<Field>) -> Self {
         let selected_fields = match selected_fields.is_empty() {
             true => Selection::new(T::fields()),
             false => Selection::new(selected_fields),
@@ -57,12 +57,12 @@ mod tests {
 
     struct TestTable {}
 
-    impl<'a> Table<'a> for TestTable {
+    impl Table for TestTable {
         fn name() -> String {
             "test_table".to_string()
         }
 
-        fn fields() -> Vec<Field<'a>> {
+        fn fields() -> Vec<Field> {
             vec![
                 Field {
                     name: "a".to_string(),

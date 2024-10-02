@@ -1,11 +1,14 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use quote::ToTokens;
+use serde::Deserialize;
+use serde::Serialize;
 
-pub enum FieldType<'a> {
+#[derive(Serialize, Deserialize, Debug, Hash)]
+pub enum FieldType {
     Any,
-    Array(&'a ManyFieldType<'a>),
-    Set(&'a ManyFieldType<'a>),
+    Array(Box<ManyFieldType>),
+    Set(Box<ManyFieldType>),
     Bool,
     Bytes,
     DateTime,
@@ -15,12 +18,12 @@ pub enum FieldType<'a> {
     Int,
     Number,
     Object,
-    Option(&'a FieldType<'a>),
+    Option(Box<FieldType>),
     String,
     Record,
 }
 
-impl<'a> ToTokens for FieldType<'a> {
+impl ToTokens for FieldType {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         match self {
             FieldType::Any => tokens.extend(quote! { surreal_client::field::FieldType::Any }),
@@ -55,12 +58,13 @@ impl<'a> ToTokens for FieldType<'a> {
     }
 }
 
-pub struct ManyFieldType<'a> {
-    pub field_type: FieldType<'a>,
+#[derive(Serialize, Deserialize, Debug, Hash)]
+pub struct ManyFieldType {
+    pub field_type: FieldType,
     pub max_length: Option<usize>,
 }
 
-impl<'a> ToTokens for ManyFieldType<'a> {
+impl<'a> ToTokens for ManyFieldType {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let field_type = &self.field_type;
         let max_length = self.max_length;
@@ -74,26 +78,27 @@ impl<'a> ToTokens for ManyFieldType<'a> {
     }
 }
 
-pub struct Field<'a> {
+#[derive(Serialize, Deserialize, Debug, Hash)]
+pub struct Field {
     pub name: String,
-    pub field_type: FieldType<'a>,
+    pub field_type: FieldType,
 }
 
-impl<'a> ToTokens for Field<'a> {
+impl ToTokens for Field {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let name = &self.name;
         let field_type = &self.field_type;
 
         tokens.extend(quote! {
             surreal_client::field::Field {
-                name: #name,
-                field_type: &#field_type,
+                name: #name.to_string(),
+                field_type: #field_type,
             }
         });
     }
 }
 
-impl<'a> From<&syn::Field> for Field<'a> {
+impl From<&syn::Field> for Field {
     fn from(value: &syn::Field) -> Self {
         let name = value
             .ident
@@ -108,5 +113,11 @@ impl<'a> From<&syn::Field> for Field<'a> {
             name: name,
             field_type: field_type,
         }
+    }
+}
+
+impl From<syn::Field> for Field {
+    fn from(value: syn::Field) -> Self {
+        Self::from(&value)
     }
 }
