@@ -1,0 +1,12 @@
+[workspace]
+members = ["client", "macros"]
+
+[package]
+name = "surreal-client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+surreal-client-core = { path = "./core" }
+surreal-client-macros = { path = "./macros" }
+macro_magic = { version = "0.5", features = ["proc_support"] }

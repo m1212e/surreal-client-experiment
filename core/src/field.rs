@@ -1,10 +1,8 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use quote::ToTokens;
-use serde::Deserialize;
-use serde::Serialize;
 
-#[derive(Serialize, Deserialize, Debug, Hash)]
+#[derive(Debug, Hash)]
 pub enum FieldType {
     Any,
     Array(Box<ManyFieldType>),
@@ -58,7 +56,7 @@ impl ToTokens for FieldType {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Hash)]
+#[derive(Debug, Hash)]
 pub struct ManyFieldType {
     pub field_type: FieldType,
     pub max_length: Option<usize>,
@@ -78,7 +76,7 @@ impl<'a> ToTokens for ManyFieldType {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Hash)]
+#[derive(Debug, Hash)]
 pub struct Field {
     pub name: String,
     pub field_type: FieldType,
