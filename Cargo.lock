@@ -9,15 +9,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
-name = "client"
-version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "const-random"
 version = "0.1.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -120,17 +111,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "macros"
-version = "0.1.0"
-dependencies = [
- "client",
- "macro_magic",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "once_cell"
 version = "1.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -167,9 +147,29 @@ dependencies = [
 name = "surreal-client"
 version = "0.1.0"
 dependencies = [
- "client",
  "macro_magic",
- "macros",
+ "surreal-client-core",
+ "surreal-client-macros",
+]
+
+[[package]]
+name = "surreal-client-core"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "surreal-client-macros"
+version = "0.1.0"
+dependencies = [
+ "macro_magic",
+ "proc-macro2",
+ "quote",
+ "surreal-client-core",
+ "syn",
 ]
 
 [[package]]

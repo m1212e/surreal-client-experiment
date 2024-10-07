@@ -8,14 +8,14 @@ use quote::quote;
 use quote::ToTokens;
 use syn::Ident;
 
-use crate::field::Field;
+use super::result_field::QueryResultField;
 
-#[derive(Hash)]
-pub struct TargetStruct {
-    fields: Vec<Field>,
+#[derive(Hash, Debug)]
+pub struct QueryResultStruct {
+    fields: Vec<QueryResultField>,
 }
 
-impl ToTokens for TargetStruct {
+impl ToTokens for QueryResultStruct {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let mut s = DefaultHasher::new();
         for field in &self.fields {
@@ -23,29 +23,22 @@ impl ToTokens for TargetStruct {
         }
         let mut hashed = s.finish().to_string();
         hashed.truncate(10);
-        hashed = format!("query_result_{}", hashed);
+        hashed = format!("QueryResult{}", hashed);
         let struct_name = Ident::new(&hashed, Span::call_site());
 
-        let fields = self.fields.iter().map(|f| f.name.clone());
+        let fields = self.fields.iter();
 
-        // #(#fields),*
         let r = quote! {
-            {
-                struct #struct_name {
-                    name: String,
-                }
-
-                #struct_name {
-                    name: String::from("daawwad"),
-                }
+            struct #struct_name {
+                #(#fields),*
             }
         };
         tokens.extend(r);
     }
 }
 
-impl TargetStruct {
-    pub fn new(fields: Vec<Field>) -> Self {
+impl QueryResultStruct {
+    pub fn new(fields: Vec<QueryResultField>) -> Self {
         Self { fields }
     }
 }

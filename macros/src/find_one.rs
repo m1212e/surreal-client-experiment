@@ -1,5 +1,5 @@
 use quote::quote;
-use client::query::result::TargetStruct;
+use surreal_client_core::query::result::QueryResult;
 
 pub fn find_one_internal(input: syn::Item) -> proc_macro2::TokenStream {
     let element_fields = match input {
@@ -8,9 +8,15 @@ pub fn find_one_internal(input: syn::Item) -> proc_macro2::TokenStream {
         _ => panic!("Invalid type"),
     };
 
-    let result = TargetStruct::new(element_fields.into_iter().map(surreal_client::field::Field::from).collect::<Vec<_>>());
+    let converted_fields = element_fields
+        .into_iter()
+        .map(surreal_client_core::field::Field::from)
+        .collect::<Vec<_>>();
 
-    quote! {#result}
+    
+    let result = QueryResult::new(converted_fields);
+
+    quote! { #result }
 }
 
 // #[cfg(test)]

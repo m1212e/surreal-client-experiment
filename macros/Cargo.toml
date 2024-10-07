@@ -9,6 +9,6 @@ proc-macro = true
 [dependencies]
 quote = "1.0"
 syn = "2.0"
-client = { path = "../client" }
+surreal-client-core = { path = "../core" }
 proc-macro2 = "1.0"
 macro_magic = { version = "0.5", features = ["proc_support"] }

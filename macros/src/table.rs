@@ -1,5 +1,5 @@
 use quote::quote;
-use syn::{token::Struct, DeriveInput};
+use syn::DeriveInput;
 
 pub fn table_internal(input: DeriveInput) -> proc_macro2::TokenStream {
     // Parse the input tokens into a syntax tree
@@ -10,22 +10,19 @@ pub fn table_internal(input: DeriveInput) -> proc_macro2::TokenStream {
         syn::Data::Enum(_data_enum) => panic!("Enums are not yet supported"),
         syn::Data::Union(_data_union) => panic!("Unions are not yet supported"),
     }
-    .map(surreal_client::field::Field::from)
+    .map(surreal_client_core::field::Field::from)
     .into_iter();
 
-    let serialized_table_fields = serde_json::to_string(&parsed_fields.clone().collect::<Vec<_>>())
-        .expect("Failed to serialize table fields");
-
     quote! {
-        #[surreal_client_macro::export_tokens(#name)]
+        #[surreal_client::export_tokens(#name)]
         #input
 
-        impl surreal_client::table::Table for #name {
+        impl surreal_client::Table for #name {
             fn name() -> String {
                 stringify!(#name).to_string()
             }
 
-            fn fields() -> Vec<surreal_client::field::Field> {
+            fn fields() -> Vec<surreal_client::Field> {
                 vec![#(#parsed_fields),*]
             }
         }
