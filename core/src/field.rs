@@ -4,7 +4,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use quote::ToTokens;
 
-#[derive(Debug, Hash)]
+#[derive(Debug, Hash, Clone)]
 pub enum FieldType {
     Any,
     Array(Box<ManyFieldType>),
@@ -52,7 +52,7 @@ impl ToTokens for FieldType {
     }
 }
 
-#[derive(Debug, Hash)]
+#[derive(Debug, Hash, Clone)]
 pub struct ManyFieldType {
     pub field_type: FieldType,
     pub max_length: Option<usize>,
@@ -72,7 +72,7 @@ impl<'a> ToTokens for ManyFieldType {
     }
 }
 
-#[derive(Debug, Hash)]
+#[derive(Debug, Hash, Clone)]
 pub struct Field {
     pub name: String,
     pub field_type: FieldType,

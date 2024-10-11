@@ -12,3 +12,4 @@ syn = "2.0"
 surreal-client-core = { path = "../core" }
 proc-macro2 = "1.0"
 macro_magic = { version = "0.5", features = ["proc_support"] }
+convert_case = "0.6.0"

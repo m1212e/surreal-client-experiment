@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use super::query_part::QueryBuilderPart;
 use crate::field::Field;
 
+#[derive(Debug, Clone)]
 pub struct Selection {
     selected_fields: Vec<Field>,
 }

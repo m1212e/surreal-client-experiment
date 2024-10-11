@@ -13,22 +13,17 @@ use super::result_field::QueryResultField;
 #[derive(Hash, Debug)]
 pub struct QueryResultStruct {
     fields: Vec<QueryResultField>,
+    pub name: String,
 }
 
 impl ToTokens for QueryResultStruct {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let mut s = DefaultHasher::new();
-        for field in &self.fields {
-            field.hash(&mut s);
-        }
-        let mut hashed = s.finish().to_string();
-        hashed.truncate(10);
-        hashed = format!("QueryResult{}", hashed);
-        let struct_name = Ident::new(&hashed, Span::call_site());
+        let struct_name = Ident::new(&self.name, Span::call_site());
 
         let fields = self.fields.iter();
 
         let r = quote! {
+            #[derive(Hash, Debug, serde::Deserialize, serde::Serialize)]
             struct #struct_name {
                 #(#fields),*
             }
@@ -39,6 +34,17 @@ impl ToTokens for QueryResultStruct {
 
 impl QueryResultStruct {
     pub fn new(fields: Vec<QueryResultField>) -> Self {
-        Self { fields }
+        let mut s = DefaultHasher::new();
+        for field in &fields {
+            field.hash(&mut s);
+        }
+        let mut hashed = s.finish().to_string();
+        hashed.truncate(10);
+        hashed = format!("QueryResult{}", hashed);
+
+        Self {
+            fields,
+            name: hashed,
+        }
     }
 }

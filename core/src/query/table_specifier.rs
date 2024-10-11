@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use super::query_part::QueryBuilderPart;
 
+#[derive(Debug, Clone)]
 pub struct TableSpecifier {
     table_name: String,
 }

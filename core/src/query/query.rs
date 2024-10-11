@@ -2,10 +2,11 @@ use std::collections::HashMap;
 
 use quote::ToTokens;
 
-use crate::{field::Field, query::query_part::QueryBuilderPart, table::Table};
+use crate::{field::Field, query::query_part::QueryBuilderPart};
 
 use super::{selection::Selection, table_specifier::TableSpecifier};
 
+#[derive(Debug, Clone)]
 pub struct Query {
     selected_fields: Selection,
     table_specifier: TableSpecifier,
@@ -35,85 +36,10 @@ impl ToTokens for Query {
 }
 
 impl Query {
-    pub fn new<T: Table>(selected_fields: Vec<Field>) -> Self {
-        let selected_fields = match selected_fields.is_empty() {
-            true => Selection::new(T::fields()),
-            false => Selection::new(selected_fields),
-        };
-        let table_specifier = TableSpecifier::new(T::name());
-
+    pub fn new(table_specifier: String, selected_fields: Vec<Field>) -> Self {
         Self {
-            selected_fields,
-            table_specifier,
+            selected_fields: Selection::new(selected_fields),
+            table_specifier: TableSpecifier::new(table_specifier),
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::field::FieldType;
-
-    use super::*;
-
-    struct TestTable {}
-
-    impl Table for TestTable {
-        fn name() -> String {
-            "test_table".to_string()
-        }
-
-        fn fields() -> Vec<Field> {
-            vec![
-                Field {
-                    name: "a".to_string(),
-                    field_type: FieldType::Any,
-                },
-                Field {
-                    name: "b".to_string(),
-                    field_type: FieldType::Any,
-                },
-            ]
-        }
-    }
-
-    #[test]
-    fn test_build() {
-        let query = Query::new::<TestTable>(TestTable::fields());
-        let built = query.to_string();
-        assert_eq!(built, "SELECT $a, $b FROM type::table($table);");
-
-        let bindings = query.bindings();
-        assert_eq!(bindings.len(), 3);
-        assert_eq!(bindings.get("a"), Some(&"a".to_string()));
-        assert_eq!(bindings.get("b"), Some(&"b".to_string()));
-        assert_eq!(bindings.get("table"), Some(&"test_table".to_string()));
-    }
-
-    #[test]
-    fn test_build_one_field() {
-        let query = Query::new::<TestTable>(vec![Field {
-            name: "a".to_string(),
-            field_type: FieldType::Any,
-        }]);
-        let built = query.to_string();
-        assert_eq!(built, "SELECT $a FROM type::table($table);");
-
-        let bindings = query.bindings();
-        assert_eq!(bindings.len(), 2);
-        assert_eq!(bindings.get("a"), Some(&"a".to_string()));
-        assert_eq!(bindings.get("table"), Some(&"test_table".to_string()));
-    }
-
-    #[test]
-    fn test_build_no_field() {
-        let query = Query::new::<TestTable>(vec![]);
-        let built = query.to_string();
-        assert_eq!(built, "SELECT $a, $b FROM type::table($table);");
-
-        let bindings = query.bindings();
-        assert_eq!(bindings.len(), 3);
-        assert_eq!(bindings.get("a"), Some(&"a".to_string()));
-        assert_eq!(bindings.get("b"), Some(&"b".to_string()));
-        assert_eq!(bindings.get("table"), Some(&"test_table".to_string()));
     }
 }

@@ -1,4 +1,5 @@
 use quote::quote;
+use surreal_client_core::field::Field;
 use syn::DeriveInput;
 
 pub fn table_internal(input: DeriveInput) -> proc_macro2::TokenStream {
@@ -10,11 +11,11 @@ pub fn table_internal(input: DeriveInput) -> proc_macro2::TokenStream {
         syn::Data::Enum(_data_enum) => panic!("Enums are not yet supported"),
         syn::Data::Union(_data_union) => panic!("Unions are not yet supported"),
     }
-    .map(surreal_client_core::field::Field::from)
+    .map(Field::from)
     .into_iter();
 
     quote! {
-        #[surreal_client::export_tokens(#name)]
+        #[surreal_client::macro_magic::export_tokens(#name)]
         #input
 
         impl surreal_client::Table for #name {
