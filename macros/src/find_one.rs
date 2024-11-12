@@ -7,12 +7,12 @@ use surreal_client_core::{
         query::Query,
         result::{result_field::QueryResultField, result_struct::QueryResultStruct},
     },
-    table::GenericTable,
+    table::Table,
 };
 use syn::Ident;
 
 pub fn find_one_internal(input: syn::Item) -> proc_macro2::TokenStream {
-    let table = GenericTable::from(input);
+    let table = Table::from(input);
 
     let query = Query::new(table.name, table.fields.clone());
     let query_string_wrapped_with_db_call = DBWrapper::new(query, "db".to_string());

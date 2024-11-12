@@ -15,7 +15,7 @@ pub fn find_one(input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_attribute]
-pub fn table(attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn table(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let item = parse_macro_input!(item as DeriveInput);
     table_internal(item).into()
 }
